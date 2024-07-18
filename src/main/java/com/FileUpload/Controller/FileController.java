@@ -1,15 +1,16 @@
 package com.FileUpload.Controller;
 
 import java.io.IOException;
+import java.io.InputStream;
 
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.util.StreamUtils;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.FileUpload.Controller.Payload.FileResponse;
@@ -44,4 +45,22 @@ public class FileController
 		
 		return new ResponseEntity<>(new FileResponse(fileName, "File is successfully uploaded"),HttpStatus.OK);
 	}
+
+	// Method to serve Files
+	@GetMapping(value = "/profiles/{imageName}",produces = MediaType.ALL_VALUE)
+	public void downloadImage(
+			@PathVariable("imageName") String imageName,
+			HttpServletResponse response
+	)
+	{
+
+		InputStream resource=this.fileService.getResource(path, imageName);
+		response.setContentType(MediaType.ALL_VALUE);
+        try {
+            StreamUtils.copy(resource, response.getOutputStream());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
 }

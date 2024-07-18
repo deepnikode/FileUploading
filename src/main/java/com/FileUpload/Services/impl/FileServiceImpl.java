@@ -1,7 +1,6 @@
 package com.FileUpload.Services.impl;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.UUID;
@@ -47,4 +46,18 @@ public class FileServiceImpl implements FileService
 		return name;
 	}
 
+	@Override
+	public InputStream getResource(String path, String fileName) {
+        String fullPath = path + File.separator + fileName;
+
+        InputStream is;
+        try {
+            is = new FileInputStream(fullPath);
+
+            // DB logic to return InputStream...
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        return is;
+    }
 }
